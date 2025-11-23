@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atividade 3 - Regressão Linear (Comentado)</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <a href="../index.html">← Voltar</a>
+    <h2>Atividade 3 — Regressão Linear (Comentado)</h2>
+
+    <p class="note">Este post documenta o cálculo da regressão linear usando álgebra matricial, mostra os coeficientes estimados e apresenta o gráfico interativo gerado.</p>
+
+    <section>
+      <h3>Resumo do procedimento (comentado)</h3>
+      <ol>
+        <li>Leitura dos vetores: `X` (variável independente) e `y` (variável dependente) a partir de `data/X.txt` e `data/y.txt`.</li>
+        <li>Construção da matriz de desenho (design matrix) adicionando uma coluna de 1s para o intercepto: <code>X_design = [1, x]</code>.</li>
+        <li>Cálculo dos coeficientes via equação normal (fórmula matricial):
+          <pre>beta = (X^T X)^{-1} X^T y</pre>
+          onde <code>beta</code> é o vetor [intercept, slope].</li>
+        <li>Geração de um gráfico interativo com os pontos originais e a reta estimada usando Plotly.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h3>Código utilizado (resumo comentado)</h3>
+      <p>O script principal é `scripts/regression.py`. Trecho essencial:</p>
+      <pre>
+import numpy as np
+# lê X e y de data/X.txt e data/y.txt
+x = np.loadtxt('data/X.txt')
+y = np.loadtxt('data/y.txt')
+
+# adiciona coluna de 1s para o intercepto
+X = np.column_stack([np.ones_like(x), x])
+
+# calcula beta = (X^T X)^{-1} X^T y
+beta = np.linalg.inv(X.T @ X) @ X.T @ y
+intercept, slope = beta[0], beta[1]
+      </pre>
+      <p>O código salva também `data/regression_plot.json` e `data/regression_plot.html` contendo o gráfico interativo.</p>
+    </section>
+
+    <section>
+      <h3>Resultados obtidos (com seus dados)</h3>
+      <p>Coeficientes calculados a partir dos arquivos que você enviou:</p>
+      <ul>
+        <li><strong>Intercepto (a):</strong> <code>373.9344683913063</code></li>
+        <li><strong>Inclinação / Slope (b):</strong> <code>991.6278332981972</code></li>
+      </ul>
+      <p class="note">Interpretação rápida: o modelo estimado é y ≈ 373.93 + 991.63 * X, onde X são os valores em `data/X.txt`.</p>
+    </section>
+
+    <section>
+      <h3>Como reproduzir localmente</h3>
+      <p>No PowerShell (Windows):</p>
+      <pre language="powershell">python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install numpy pandas plotly
+python scripts\regression.py
+# Isso gera: data/regression_plot.json e data/regression_plot.html
+      </pre>
+      <p>Abra `data/regression_plot.html` ou `posts/activity3.html` neste mesmo diretório para ver o gráfico interativo.</p>
+    </section>
+
+    <section>
+      <h3>Gráfico interativo</h3>
+      <div id="plot" style="width:100%;max-width:900px;height:520px"></div>
+      <p class="note">O gráfico abaixo tenta carregar o arquivo JSON gerado automaticamente pelo script; se não existir, rode o script conforme instruções acima.</p>
+    </section>
+
+    <script>
+      // Carrega o JSON do gráfico gerado por scripts/regression.py
+      fetch('../data/regression_plot.json')
+        .then(r => {
+          if (!r.ok) throw new Error('Arquivo de gráfico não encontrado. Rode scripts/regression.py');
+          return r.json();
+        })
+        .then(obj => Plotly.newPlot('plot', obj.data, obj.layout))
+        .catch(err => {
+          document.getElementById('plot').innerHTML = '<p class="note">'+err.message+'</p>';
+        });
+    </script>
+  </body>
+</html>

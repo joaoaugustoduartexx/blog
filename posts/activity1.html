@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atividade 1 - Cotação do Dólar</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <a href="../index.html">← Voltar</a>
+    <h2>Atividade 1 — Cotação do Dólar por Período</h2>
+
+    <p class="note">Descrição: receber uma string no formato <code>MMYYYY</code>, buscar cotação diária do dólar para o mês/ano e plotar um gráfico de linha com Plotly.</p>
+
+    <section>
+      <h3>O que foi feito</h3>
+      <ul>
+        <li>Criei um script Python `scripts/fetch_dolar.py` que, dado `MMYYYY`, consulta a API do Banco Central (PTAX) para o período correspondente e gera um arquivo JSON em `data/`.</li>
+        <li>O script normaliza datas faltantes (finais de semana/feriados) fazendo "forward fill" a partir do último dia útil disponível.</li>
+        <li>O post carrega o JSON gerado e plota um gráfico interativo com <code>plotly.js</code>.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Como usar (exemplo)</h3>
+      <p>Execute no seu terminal (Python 3.8+):</p>
+      <pre>python scripts\fetch_dolar.py 082021</pre>
+      <p>Isso criará um arquivo JSON em <code>data/dolar_082021.json</code>. Abra esta página para ver o gráfico.</p>
+    </section>
+
+    <section>
+      <h3>Gráfico</h3>
+      <div id="chart" style="width:100%;max-width:900px;height:520px"></div>
+    </section>
+
+    <script>
+      // Carrega o arquivo JSON gerado pelo script Python.
+      // Substitua o nome do arquivo se necessário.
+      fetch('../data/dolar_082021.json')
+        .then(r => {
+          if (!r.ok) throw new Error('Arquivo de dados não encontrado. Rode o script Python.');
+          return r.json();
+        })
+        .then(data => {
+          const dates = data.map(d => d.date);
+          const values = data.map(d => d.value);
+
+          const trace = { x: dates, y: values, type: 'scatter', mode: 'lines+markers', name: 'USD/BRL' };
+          const layout = { title: 'Cotação do Dólar (mês)', xaxis: {title: 'Data'}, yaxis: {title: 'Cotação (R$)'} };
+          Plotly.newPlot('chart', [trace], layout);
+        })
+        .catch(err => {
+          document.getElementById('chart').innerHTML = '<p class="note">Erro ao carregar dados: '+err.message+'</p>';
+        })
+    </script>
+  </body>
+</html>

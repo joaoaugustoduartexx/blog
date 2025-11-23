@@ -1,0 +1,10 @@
+/* Estilos mínimos para o blog */
+body { font-family: Arial, Helvetica, sans-serif; margin: 24px; color:#222 }
+header { margin-bottom: 18px }
+header h1 { margin: 0 0 6px 0 }
+main ul { list-style: none; padding: 0 }
+main li { margin: 8px 0 }
+a { color: #1a73e8; text-decoration: none }
+a:hover { text-decoration: underline }
+pre { background:#f6f6f6; padding:12px; overflow:auto }
+.note { color:#555; font-size:0.95em }
