@@ -1,0 +1,59 @@
+name: Build and Publish Site
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run regression (Activity 3)
+        run: |
+          python scripts/regression.py
+
+      - name: Fetch bus positions (Activity 2)
+        env:
+          BUS_API_URL: ${{ secrets.BUS_API_URL }}
+          BUS_API_TOKEN: ${{ secrets.BUS_API_TOKEN }}
+        run: |
+          if [ -n "${BUS_API_URL}" ]; then
+            echo "Fetching bus positions from ${BUS_API_URL}"
+            python scripts/fetch_buses.py --out data/bus_positions.json || echo "fetch_buses failed"
+          else
+            echo "BUS_API_URL not set; skipping fetch_buses"
+          fi
+
+      - name: Fetch dólar periods (Activity 1) — optional
+        env:
+          DOLAR_MONTHS: ${{ secrets.DOLAR_MONTHS }}
+        run: |
+          if [ -n "${DOLAR_MONTHS}" ]; then
+            echo "DOLAR_MONTHS set: $DOLAR_MONTHS"
+            IFS=',' read -ra MS <<< "$DOLAR_MONTHS"
+            for m in "${MS[@]}"; do
+              echo "Fetching dolar for $m"
+              python scripts/fetch_dolar.py "$m" || echo "fetch_dolar failed for $m"
+            done
+          else
+            echo "DOLAR_MONTHS not set; skipping fetch_dolar"
+          fi
+
+      - name: Publish to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./

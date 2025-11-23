@@ -1,0 +1,5 @@
+[
+  { "id": "P1", "name": "Parada A", "lat": -23.551, "lon": -46.634 },
+  { "id": "P2", "name": "Parada B", "lat": -23.558, "lon": -46.620 },
+  { "id": "P3", "name": "Parada C", "lat": -23.545, "lon": -46.610 }
+]
