@@ -29,21 +29,7 @@
       <div id="map"></div>
     </section>
 
-    <section>
-      <h3>Instruções</h3>
-      <ol>
-        <li>Criar conta/projeto no provedor de dados (prefira a API da prefeitura/operadora local) e obter token, se necessário.</li>
-        <li>Adicione a URL da API e o token (se houver) no arquivo `.env` na raiz do projeto. Exemplo em <code>.env.example</code>.
-          <pre>BUS_API_URL=https://api.exemplo/veiculos
-BUS_API_TOKEN=SEU_TOKEN_AQUI</pre>
-        </li>
-        <li>Ou execute o script diretamente passando a URL/token:
-          <pre>python scripts\fetch_buses.py --url "https://api.exemplo/veiculos" --token "SEU_TOKEN" --out data\bus_positions.json</pre>
-        </li>
-        <li>Abra esta página; o mapa lerá o arquivo `data/bus_positions.json` e desenhará paradas (azul) e veículos (vermelho). Substitua a URL de demonstração no `.env` pela sua API real.</li>
-      </ol>
-      <p class="note">URL de demonstração no código: <code>https://api.exemplo/veiculos</code> — troque por sua URL real no `.env` ou via parâmetro CLI.</p>
-    </section>
+    
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
